@@ -1,0 +1,7 @@
+.classpath
+*.db
+mvn.bat
+.project
+.settings/
+indexes/
+target/

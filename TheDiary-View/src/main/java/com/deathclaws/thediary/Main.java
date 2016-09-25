@@ -1,44 +1,42 @@
 package com.deathclaws.thediary;
 
-import java.util.GregorianCalendar;
-
-import javax.persistence.EntityManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 
-import com.deathclaws.thediary.model.Article;
 import com.deathclaws.thediary.util.HibernateUtil;
+import com.deathclaws.thediary.view.ArticleScene;
 import com.deathclaws.thediary.view.SearchScene;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
 	private static final Logger logger = LogManager.getLogger(Main.class.getName());
-
+	
     public static void main(String[] args) { 
+    	logger.debug("started");
     	launch(args);
-    	logger.debug("launch");
     }
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("The diary");
-        SearchScene searchScene = SearchScene.create();
+        Scene searchScene = ArticleScene.create();
         primaryStage.setScene(searchScene);
         primaryStage.show();
+        
+        Scene cds = SearchScene.create();
+        Stage stage = new Stage();
+        stage.setScene(cds);
+        stage.show();
 	}
 
 	@Override
 	public void init() throws Exception {
 		super.init();
 		HibernateUtil.initFactory();
-		doIndex();
-		addRoger();
 	}
 
 	@Override
@@ -46,7 +44,7 @@ public class Main extends Application {
 		super.stop();
 		HibernateUtil.closeSessionFactory();
 	}
-
+/*
 	private static void doIndex() throws InterruptedException {
 		EntityManager entityManager = HibernateUtil.getEntityManager();
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
@@ -82,12 +80,8 @@ public class Main extends Application {
 			entityManager.getTransaction().rollback();
 			ex.printStackTrace();
 		} finally{
-			/*
-			if(session != null) {
-				session.close();
-			}*/
 			entityManager.close();
 		}
 	}
-
+*/
 }

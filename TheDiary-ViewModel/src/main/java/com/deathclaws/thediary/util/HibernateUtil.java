@@ -3,6 +3,7 @@ package com.deathclaws.thediary.util;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
 
 import org.hibernate.HibernateException;
 /*
@@ -31,6 +32,10 @@ public class HibernateUtil {
 */
 	public static EntityManager getEntityManager() {
 		return entityManagerFactory.createEntityManager();
+	}
+	
+	public static CriteriaBuilder getCriteriaBuilder() {
+		return entityManagerFactory.getCriteriaBuilder();
 	}
 	
 	public static void closeSessionFactory() {

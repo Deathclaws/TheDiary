@@ -4,6 +4,8 @@ import com.deathclaws.thediary.util.ArticleUtil;
 import com.deathclaws.thediary.viewmodel.ArticleViewModel;
 import com.deathclaws.thediary.viewmodel.SearchViewModel;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 /*
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
@@ -40,35 +42,27 @@ public class SearchScene extends Scene {
         hBox.getChildren().addAll(textField, buttonSearch);
         HBox.setHgrow(textField, Priority.ALWAYS);
         table.setEditable(true);
-        TableColumn<ArticleViewModel, String> firstNameCol = new TableColumn<ArticleViewModel, String>("First Name");
+        
+        TableColumn<ArticleViewModel, String> firstNameCol = new TableColumn<ArticleViewModel, String>("Nom");
         firstNameCol.setCellValueFactory(ArticleUtil.callbackName());
-        TableColumn<ArticleViewModel, String> emailCol = new TableColumn<ArticleViewModel, String>("Email");
+        TableColumn<ArticleViewModel, String> emailCol = new TableColumn<ArticleViewModel, String>("Date");
         emailCol.setCellValueFactory(ArticleUtil.callbackName());
+        TableColumn<ArticleViewModel, EventHandler<ActionEvent>> buttonCol = new TableColumn<ArticleViewModel, EventHandler<ActionEvent>>();
+        buttonCol.setCellValueFactory(ArticleUtil.callbackButton());       
+        
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         table.getColumns().add(firstNameCol);
         table.getColumns().add(emailCol);
-
+        table.getColumns().add(buttonCol);
+        
         vbox.getChildren().addAll(hBox, table, buttonCreate);
         VBox.setVgrow(table, Priority.ALWAYS);
 
         buttonSearch.onActionProperty().bindBidirectional(searchViewModel.onSearch());
         textField.textProperty().bindBidirectional(searchViewModel.getSearchTerm());
         table.setItems(searchViewModel.getArticleViewModels());
-
-/*
-        String toto = "toto";
-
-        StringProperty s = new SimpleStringProperty(toto);
-
-        Bindings.bindBidirectional(textField.textProperty(), s);
-
-        ObservableList<Article> datas = FXCollections.observableArrayList();
-
-        datas.add(new Article());
-
-        table.setItems(datas);
-*/
+        
     }
 
 

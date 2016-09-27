@@ -4,4 +4,14 @@ import com.deathclaws.thediary.messaging.Message;
 
 public class ArticleChangeMessage implements Message {
 
+	final private long identifier;
+
+	public ArticleChangeMessage(long identifier) {
+		this.identifier = identifier;
+	}
+
+	public long getIdentifier() {
+		return identifier;
+	}
+	
 }

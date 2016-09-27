@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import com.deathclaws.thediary.model.Article;
 import com.deathclaws.thediary.util.HibernateUtil;
@@ -29,7 +28,7 @@ public class SearchViewModel {
 
 	public SearchViewModel() {
 		searchTerm = new SimpleStringProperty();
-		articleViewModels = FXCollections.observableArrayList(); // emptyObservableList();
+		articleViewModels = FXCollections.observableArrayList();
 		EventHandler<ActionEvent> searchEventHandler = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				searchEventHandler(arg0);
@@ -44,15 +43,13 @@ public class SearchViewModel {
 		CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
 		criteriaQuery.select(criteriaQuery.from(Article.class));
 		List<Article> articles = entityManager.createQuery(criteriaQuery).getResultList();
+		articleViewModels.clear();
 		for (Article article : articles) {
 			ArticleViewModel articleViewModel = new ArticleViewModel();
+			articleViewModel.getIdentifier().setValue(article.getId());
 			articleViewModel.getName().setValue(article.getName());
 			articleViewModels.add(articleViewModel);
 		}
-	}
-
-	private void setList(List<ArticleViewModel> src) {
-		FXCollections.copy(articleViewModels, src);
 	}
 
 	public ObservableList<ArticleViewModel> getArticleViewModels() {

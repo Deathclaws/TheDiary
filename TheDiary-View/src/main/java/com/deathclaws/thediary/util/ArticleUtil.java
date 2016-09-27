@@ -2,9 +2,8 @@ package com.deathclaws.thediary.util;
 
 import com.deathclaws.thediary.viewmodel.ArticleViewModel;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -20,11 +19,12 @@ public final class ArticleUtil {
 		};
 	}
 
-	public static Callback<CellDataFeatures<ArticleViewModel, EventHandler<ActionEvent>>, ObservableValue<EventHandler<ActionEvent>>> callbackButton() {
-		return new Callback<TableColumn.CellDataFeatures<ArticleViewModel,EventHandler<ActionEvent>>, ObservableValue<EventHandler<ActionEvent>>>() {
-			public ObservableValue<EventHandler<ActionEvent>> call(CellDataFeatures<ArticleViewModel, EventHandler<ActionEvent>> param) {
+	public static Callback<CellDataFeatures<ArticleViewModel, Button>, ObservableValue<Button>> callbackButton() {
+		return new Callback<TableColumn.CellDataFeatures<ArticleViewModel,Button>, ObservableValue<Button>>() {
+			public ObservableValue<Button> call(CellDataFeatures<ArticleViewModel, Button> param) {
 				Button button = new Button("Yoo");
-				return button.onActionProperty();
+				button.onActionProperty().bindBidirectional(param.getValue().getActionButtonProperty());
+				return new SimpleObjectProperty<Button>(button);
 			}
 		};
 	}

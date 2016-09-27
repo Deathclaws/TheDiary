@@ -4,15 +4,6 @@ import com.deathclaws.thediary.util.ArticleUtil;
 import com.deathclaws.thediary.viewmodel.ArticleViewModel;
 import com.deathclaws.thediary.viewmodel.SearchViewModel;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-/*
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-*/
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -47,7 +38,7 @@ public class SearchScene extends Scene {
         firstNameCol.setCellValueFactory(ArticleUtil.callbackName());
         TableColumn<ArticleViewModel, String> emailCol = new TableColumn<ArticleViewModel, String>("Date");
         emailCol.setCellValueFactory(ArticleUtil.callbackName());
-        TableColumn<ArticleViewModel, EventHandler<ActionEvent>> buttonCol = new TableColumn<ArticleViewModel, EventHandler<ActionEvent>>();
+        TableColumn<ArticleViewModel, Button> buttonCol = new TableColumn<ArticleViewModel, Button>();
         buttonCol.setCellValueFactory(ArticleUtil.callbackButton());       
         
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

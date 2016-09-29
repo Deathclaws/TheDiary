@@ -13,6 +13,7 @@ import org.hibernate.search.annotations.Store;
 
 @Entity
 @Indexed
+// @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Article {
 
 	@Id

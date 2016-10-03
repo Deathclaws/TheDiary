@@ -53,7 +53,7 @@ public class SearchScene extends Scene {
         buttonSearch.onActionProperty().bindBidirectional(searchViewModel.onSearch());
         textField.textProperty().bindBidirectional(searchViewModel.getSearchTerm());
         table.setItems(searchViewModel.getArticleViewModels());
-        
+
     }
 
 

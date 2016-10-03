@@ -3,8 +3,14 @@ package com.deathclaws.thediary.viewmodel;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+
+import org.apache.lucene.search.Query;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.DatabaseRetrievalMethod;
+import org.hibernate.search.query.ObjectLookupMethod;
+import org.hibernate.search.query.dsl.QueryBuilder;
 
 import com.deathclaws.thediary.model.Article;
 import com.deathclaws.thediary.util.HibernateUtil;
@@ -37,12 +43,23 @@ public class SearchViewModel {
 		searchEventHandlerProperty = new SimpleObjectProperty<EventHandler<ActionEvent>>(searchEventHandler);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void searchEventHandler(ActionEvent arg0) {
+		String text = searchTerm.get();
+		EntityManager entityManager = HibernateUtil.getEntityManager();
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+		final QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Article.class).get();
+		final Query query = queryBuilder.keyword().fuzzy().onFields("description").andField("name").matching(text).createQuery();
+		final FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Article.class);
+		fullTextQuery.initializeObjectsWith(ObjectLookupMethod.SKIP, DatabaseRetrievalMethod.FIND_BY_ID);
+		List<Article> articles = fullTextQuery.getResultList();
+		/*
 		EntityManager entityManager = HibernateUtil.getEntityManager();
 		CriteriaBuilder criteriaBuilder = HibernateUtil.getCriteriaBuilder();
 		CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
 		criteriaQuery.select(criteriaQuery.from(Article.class));
 		List<Article> articles = entityManager.createQuery(criteriaQuery).getResultList();
+		*/
 		articleViewModels.clear();
 		for (Article article : articles) {
 			ArticleViewModel articleViewModel = new ArticleViewModel();

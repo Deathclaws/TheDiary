@@ -34,7 +34,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("The diary");
+		
 		Scene searchScene = ArticleScene.create();
 		primaryStage.setScene(searchScene);
 		primaryStage.show();
@@ -43,8 +43,11 @@ public class Main extends Application {
 		Stage stage = new Stage();
 		stage.setScene(cds);
 		stage.show();
-
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		
+		stage.setTitle("The diary");
+		primaryStage.setTitle("The diary");
+		
+		EventHandler<WindowEvent> eventHandler = new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
 				Alert alert = new Alert(AlertType.CONFIRMATION);
 				alert.setTitle("Confirmation");
@@ -57,7 +60,10 @@ public class Main extends Application {
 					alert.close();
 				}
 			}
-		});
+		};
+		
+		stage.setOnCloseRequest(eventHandler);
+		primaryStage.setOnCloseRequest(eventHandler);
 	}
 
 	@Override

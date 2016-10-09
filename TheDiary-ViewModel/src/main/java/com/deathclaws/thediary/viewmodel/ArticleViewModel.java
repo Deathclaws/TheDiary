@@ -1,7 +1,6 @@
 package com.deathclaws.thediary.viewmodel;
 
-import java.time.LocalDate;
-
+import java.util.Calendar;
 import com.deathclaws.thediary.messages.ArticleChangeMessage;
 import com.deathclaws.thediary.messaging.Messenger;
 
@@ -20,7 +19,7 @@ public class ArticleViewModel {
 
 	private final LongProperty identifier;
     private final StringProperty name;
-    private final ObjectProperty<LocalDate> date;
+    private final ObjectProperty<Calendar> date;
     private final Property<EventHandler<ActionEvent>> eventHandlerButton;
     private final ObjectProperty<Button> button;
     
@@ -33,7 +32,7 @@ public class ArticleViewModel {
 		};
 		identifier = new SimpleLongProperty();
     	name = new SimpleStringProperty();
-    	date = new SimpleObjectProperty<LocalDate>();
+    	date = new SimpleObjectProperty<Calendar>();
     	button = new SimpleObjectProperty<Button>();
     	eventHandlerButton = new SimpleObjectProperty<EventHandler<ActionEvent>>(handler);
     }
@@ -42,7 +41,7 @@ public class ArticleViewModel {
 		return name;
 	}
 
-	public ObjectProperty<LocalDate> getDate() {
+	public ObjectProperty<Calendar> getDate() {
 		return date;
 	}
 

@@ -1,5 +1,7 @@
 package com.deathclaws.thediary.viewmodel;
 
+import java.util.GregorianCalendar;
+
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -39,11 +41,13 @@ public class ArticleSceneViewModel {
 
 	private final Property<EventHandler<ActionEvent>> saveEventhandlerProperty;
 
+	private final Property<EventHandler<ActionEvent>> cancelEventhandlerProperty;
+
 	public ArticleSceneViewModel() {
 		identifierProperty = new SimpleLongProperty();
-		nameProperty = new SimpleStringProperty();
-		htmlProperty = new SimpleStringProperty();
-		descriptionProperty = new SimpleStringProperty();
+		nameProperty = new SimpleStringProperty("");
+		htmlProperty = new SimpleStringProperty("");
+		descriptionProperty = new SimpleStringProperty("");
 		editableProperty = new SimpleBooleanProperty();
 		
 		EventHandler<ActionEvent> searchEventHandler = new EventHandler<ActionEvent>() {
@@ -56,9 +60,15 @@ public class ArticleSceneViewModel {
 				saveEventHandler(arg0);
 			}
 		};
+		EventHandler<ActionEvent> cancelEventHandler = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				cancelEventHandler(arg0);
+			}
+		};
 		
 		searchEventHandlerProperty = new SimpleObjectProperty<EventHandler<ActionEvent>>(searchEventHandler);
 		saveEventhandlerProperty = new SimpleObjectProperty<EventHandler<ActionEvent>>(saveEventHandler);
+		cancelEventhandlerProperty = new SimpleObjectProperty<EventHandler<ActionEvent>>(cancelEventHandler);
 		
 		descriptionProperty.addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -79,16 +89,25 @@ public class ArticleSceneViewModel {
 		return html;
 	}
 	
+	private void cancelEventHandler(ActionEvent arg0) {
+		loadData(identifierProperty.get());
+	}
+	
 	private void saveEventHandler(ActionEvent arg0) {
-		Article article = new Article();
-		article.setId(identifierProperty.get());
-		article.setName(nameProperty.get());
-		article.setDescription(descriptionProperty.get());
 		EntityManager entityManager = HibernateUtil.getEntityManager();
 		try {
 			entityManager.getTransaction().begin();
-			entityManager.merge(article);
+			Article article = entityManager.find(Article.class, identifierProperty.get());
+			if(article == null) { 
+				article = new Article(); 
+				article.setDate(new GregorianCalendar());
+			}
+			article.setName(nameProperty.get());
+			article.setDescription(descriptionProperty.get());
+			Article mergeArticle = entityManager.merge(article);
 			entityManager.getTransaction().commit();
+			identifierProperty.set(mergeArticle.getId());
+			editableProperty.set(false);
 		} catch (Exception ex) {
 			entityManager.getTransaction().rollback();
 			throw ex;
@@ -98,14 +117,27 @@ public class ArticleSceneViewModel {
 	}
 	
 	private void searchEventHandler(ArticleChangeMessage arg0) {
-		EntityManager entityManager = HibernateUtil.getEntityManager();
-		Article article = entityManager.find(Article.class, arg0.getIdentifier());
-		descriptionProperty.setValue(article.getDescription());
-		nameProperty.setValue(article.getName());
-		identifierProperty.set(article.getId());
-		entityManager.close();
+		Long identifier = arg0.getIdentifier();
+		loadData(identifier);
 	}
 
+	private void loadData(long identifier) {
+		if(identifier != 0) {
+			EntityManager entityManager = HibernateUtil.getEntityManager();
+			Article article = entityManager.find(Article.class, identifier);
+			entityManager.close();
+			descriptionProperty.setValue(article.getDescription());
+			nameProperty.setValue(article.getName());
+			identifierProperty.set(article.getId());
+			editableProperty.set(false);
+		} else {
+			descriptionProperty.setValue("");
+			nameProperty.setValue("");
+			identifierProperty.set(0);
+			editableProperty.set(true);
+		}
+	}
+	
 	public StringProperty getNameProperty() {
 		return nameProperty;
 	}
@@ -132,6 +164,10 @@ public class ArticleSceneViewModel {
 
 	public LongProperty getIdentifierProperty() {
 		return identifierProperty;
+	}
+
+	public Property<EventHandler<ActionEvent>> getCancelEventhandlerProperty() {
+		return cancelEventhandlerProperty;
 	}
 	
 }

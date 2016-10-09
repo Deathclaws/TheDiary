@@ -34,12 +34,6 @@
 		    <version>3.4</version>
 		</dependency>
 		
-		<dependency>
-		    <groupId>org.eclipse.mylyn.wikitext</groupId>
-		    <artifactId>wikitext</artifactId>
-		    <version>1.7.4.v20130429-0100</version>
-		</dependency>
-		
 <!-- 
 		<dependency>
 		    <groupId>org.hibernate</groupId>

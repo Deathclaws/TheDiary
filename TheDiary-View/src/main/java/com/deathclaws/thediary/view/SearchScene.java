@@ -1,5 +1,7 @@
 package com.deathclaws.thediary.view;
 
+import java.util.Calendar;
+
 import com.deathclaws.thediary.util.ArticleUtil;
 import com.deathclaws.thediary.viewmodel.ArticleViewModel;
 import com.deathclaws.thediary.viewmodel.SearchViewModel;
@@ -36,13 +38,14 @@ public class SearchScene extends Scene {
         
         TableColumn<ArticleViewModel, String> firstNameCol = new TableColumn<ArticleViewModel, String>("Nom");
         firstNameCol.setCellValueFactory(ArticleUtil.callbackName());
-        TableColumn<ArticleViewModel, String> emailCol = new TableColumn<ArticleViewModel, String>("Date");
-        emailCol.setCellValueFactory(ArticleUtil.callbackName());
+        TableColumn<ArticleViewModel, Calendar> emailCol = new TableColumn<ArticleViewModel, Calendar>("Date");
+        emailCol.setCellValueFactory(ArticleUtil.callbackDate());
+        emailCol.setCellFactory(ArticleUtil.callbackDate2());
         TableColumn<ArticleViewModel, Button> buttonCol = new TableColumn<ArticleViewModel, Button>();
         buttonCol.setCellValueFactory(ArticleUtil.callbackButton());       
         
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+        
         table.getColumns().add(firstNameCol);
         table.getColumns().add(emailCol);
         table.getColumns().add(buttonCol);
@@ -51,6 +54,7 @@ public class SearchScene extends Scene {
         VBox.setVgrow(table, Priority.ALWAYS);
 
         buttonSearch.onActionProperty().bindBidirectional(searchViewModel.onSearch());
+        buttonCreate.onActionProperty().bindBidirectional(searchViewModel.onCreate());
         textField.textProperty().bindBidirectional(searchViewModel.getSearchTerm());
         table.setItems(searchViewModel.getArticleViewModels());
 

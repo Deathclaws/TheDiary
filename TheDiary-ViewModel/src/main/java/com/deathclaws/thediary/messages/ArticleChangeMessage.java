@@ -6,6 +6,10 @@ public class ArticleChangeMessage implements Message {
 
 	final private long identifier;
 
+	public ArticleChangeMessage() {
+		this.identifier = 0;
+	}
+	
 	public ArticleChangeMessage(long identifier) {
 		this.identifier = identifier;
 	}

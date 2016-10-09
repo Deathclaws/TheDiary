@@ -49,6 +49,13 @@ public class ArticleScene extends Scene {
 		cancelButton.visibleProperty().bind(model.getEditableProperty());
 		textarea.visibleProperty().bind(model.getEditableProperty());
 		
+		model.getEditableProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				textField.setDisable(!newValue);
+			}
+		});
+		
 		textField.textProperty().bindBidirectional(model.getNameProperty());
 		textarea.textProperty().bindBidirectional(model.getDescriptionProperty());
 		
@@ -57,16 +64,8 @@ public class ArticleScene extends Scene {
 				model.getEditableProperty().set(true);
 			}
 		});
-		/*
-		saveButton.setOnMouseClicked(new EventHandler<Event>() {
-			public void handle(Event event) {
-				model.getEditableProperty().set(false);
-			}
-		});	
-		*/
 		saveButton.onActionProperty().bindBidirectional(model.getSaveEventhandlerProperty());
-		
-				
+		cancelButton.onActionProperty().bindBidirectional(model.getCancelEventhandlerProperty());
 		
 		model.getHtmlProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

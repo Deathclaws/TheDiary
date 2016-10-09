@@ -9,6 +9,6 @@
 		<Root level="warn">
 			<AppenderRef ref="CONSOLE" />
 		</Root>
-		<logger name="javabeat.net.util" level="TRACE" />
+		<logger name="com.deathclaws.thediary" level="TRACE" />
 	</Loggers>
 </Configuration>

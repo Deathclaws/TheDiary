@@ -9,6 +9,9 @@ import com.deathclaws.thediary.viewmodel.SearchViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -25,6 +28,9 @@ public class SearchScene extends Scene {
 
 	private SearchScene(VBox vbox) {
         super(vbox);
+        final MenuBar mainMenu = new MenuBar();
+        final Menu file = new Menu("Options");
+        final MenuItem index = new MenuItem("Index");
         final SearchViewModel searchViewModel = new SearchViewModel();
         final HBox hBox = new HBox();
         final Button buttonSearch = new Button("Search");
@@ -35,6 +41,8 @@ public class SearchScene extends Scene {
         hBox.getChildren().addAll(textField, buttonSearch);
         HBox.setHgrow(textField, Priority.ALWAYS);
         table.setEditable(true);
+        
+        textField.onKeyPressedProperty().bindBidirectional(searchViewModel.onSearchKeyPressed());
         
         TableColumn<ArticleViewModel, String> firstNameCol = new TableColumn<ArticleViewModel, String>("Nom");
         firstNameCol.setCellValueFactory(ArticleUtil.callbackName());
@@ -50,9 +58,14 @@ public class SearchScene extends Scene {
         table.getColumns().add(emailCol);
         table.getColumns().add(buttonCol);
         
-        vbox.getChildren().addAll(hBox, table, buttonCreate);
+        file.getItems().addAll(index);
+        mainMenu.getMenus().addAll(file);
+        
+        vbox.getChildren().addAll(mainMenu, hBox, table, buttonCreate);
         VBox.setVgrow(table, Priority.ALWAYS);
 
+        index.onActionProperty().bindBidirectional(searchViewModel.onIndex());
+        
         buttonSearch.onActionProperty().bindBidirectional(searchViewModel.onSearch());
         buttonCreate.onActionProperty().bindBidirectional(searchViewModel.onCreate());
         textField.textProperty().bindBidirectional(searchViewModel.getSearchTerm());

@@ -27,6 +27,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class SearchViewModel {
 
@@ -38,12 +40,17 @@ public class SearchViewModel {
 
 	private final Property<EventHandler<ActionEvent>> createEventHandlerProperty;
 
+	private final Property<EventHandler<? super KeyEvent>> keyPressedEventHandlerProperty;
+
+	private final  Property<EventHandler<ActionEvent>> indexEventHandlerProperty;
+
 	public SearchViewModel() {
-		searchTerm = new SimpleStringProperty();
+		
+		searchTerm = new SimpleStringProperty("");
 		articleViewModels = FXCollections.observableArrayList();
 		EventHandler<ActionEvent> searchEventHandler = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				searchEventHandler(arg0);
+				searchEventHandler();
 			}
 		};
 		EventHandler<ActionEvent> createEventHandler = new EventHandler<ActionEvent>() {
@@ -51,6 +58,20 @@ public class SearchViewModel {
 				createEventHandler(arg0);
 			}
 		};
+		EventHandler<KeyEvent> keyPressedEventHandler = new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent event) {
+				if(event.getCode() == KeyCode.ENTER)
+					searchEventHandler();
+			}
+		};
+		EventHandler<ActionEvent> indexEventHandler = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				indexEventHandler();
+			}
+		};
+		
+		indexEventHandlerProperty = new SimpleObjectProperty<>(indexEventHandler);
+		keyPressedEventHandlerProperty = new SimpleObjectProperty<>(keyPressedEventHandler);
 		searchEventHandlerProperty = new SimpleObjectProperty<EventHandler<ActionEvent>>(searchEventHandler);
 		createEventHandlerProperty = new SimpleObjectProperty<EventHandler<ActionEvent>>(createEventHandler);
 	}
@@ -59,8 +80,19 @@ public class SearchViewModel {
 		Messenger.defaut.send(new ArticleChangeMessage());
 	}
 	
+	private void indexEventHandler() {
+		try {
+			EntityManager entityManager = HibernateUtil.getEntityManager();
+			FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+			fullTextEntityManager.createIndexer().startAndWait();
+			fullTextEntityManager.close();
+		} catch (Exception e) {
+			
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
-	private void searchEventHandler(ActionEvent arg0) {
+	private void searchEventHandler() {
 		String text = searchTerm.get();
 		EntityManager entityManager = HibernateUtil.getEntityManager();
 		
@@ -105,4 +137,11 @@ public class SearchViewModel {
 		return createEventHandlerProperty;
 	}
 
+	public Property<EventHandler<? super KeyEvent>> onSearchKeyPressed() {
+		return keyPressedEventHandlerProperty;
+	}
+
+	public Property<EventHandler<ActionEvent>> onIndex() {
+		return indexEventHandlerProperty;
+	}
 }
